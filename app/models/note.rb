@@ -12,4 +12,7 @@
 #
 class Note < ApplicationRecord
   belongs_to :users
+
+  validates :note_type, inclusion: {in: %w(review critique)},
+  message: "El atributo note_type tiene que ser 'review' o 'critique'"
 end
