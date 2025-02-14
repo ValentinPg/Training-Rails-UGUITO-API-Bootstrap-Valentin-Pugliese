@@ -10,7 +10,7 @@ RSpec.describe Note, type: :model do
   end
 
   it 'note_type must be review or critique' do
-    expect {note.note_type = 'rand'}.to raise_error
+    expect {note.note_type = 'rand'}.to raise_error(ArgumentError)
   end
 
 
@@ -20,4 +20,7 @@ RSpec.describe Note, type: :model do
 
   it {is_expected.to belong_to(:user)}
 
+  it 'word_length returns the number of characters in the content field' do
+    expect(subject.word_count).to eq(subject.content.length)
+  end
 end
