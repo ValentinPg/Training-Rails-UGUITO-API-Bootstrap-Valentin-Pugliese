@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :note do
-    title { "MyString" }
-    content { "MyString" }
-    note_type { "MyString" }
+    title {Faker::Markdown.emphasis}
+    content {Faker::Markdown.emphasis}
+    note_type {"review"}
+    user
   end
 end
