@@ -13,11 +13,14 @@
 class Note < ApplicationRecord
   belongs_to :user
 
-  enum note_type: {"review": 0, "critique": 1}
+  enum note_type: { "review": 0, "critique": 1 }
   validates :title, :content, :note_type, presence: true
-
 
   def word_count
     content.length
+  end
+
+  def content_length
+    user.utility.content_length_criteria(word_count)
   end
 end
