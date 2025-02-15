@@ -4,10 +4,10 @@ class SouthUtility < Utility
   end
 
   def medium?(length)
-    length > 50 && length < 100
+    length > 60 && length < 120
   end
 
   def long?(length)
-    length > 100
+    length > 120
   end
 end
