@@ -29,9 +29,6 @@ class Utility < ApplicationRecord
 
   store_accessor :integration_urls, :external_api_authentication_url, :books_data_url
 
-  @short = nil
-  @long = nil
-
   def generate_entity_code
     return if code.present? && !code.to_i.zero?
     self.code = id
@@ -77,9 +74,9 @@ class Utility < ApplicationRecord
   end
 
   def content_length_criteria(length)
-    if length <= @short
+    if short?(length)
       'short'
-    elsif length > @short && length <= @long
+    elsif medium?(length)
       'medium'
     else
       'long'
@@ -87,6 +84,14 @@ class Utility < ApplicationRecord
   end
 
   private
+
+  def short?(_length)
+    NotImplementedError
+  end
+
+  def medium?(_length)
+    NotImplementedError
+  end
 
   def utility_type
     type.chomp('Utility')

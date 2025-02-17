@@ -15,12 +15,19 @@ class Note < ApplicationRecord
 
   enum note_type: { "review": 0, "critique": 1 }
   validates :title, :content, :note_type, presence: true
+  validate :review_cap
 
   def word_count
-    content.length
+    content.split.size
   end
 
   def content_length
     user.utility.content_length_criteria(word_count)
+  end
+
+  def review_cap
+    if content_length != 'short' && note_type == 'review'
+      errors.add('A review must be shorter')
+    end
   end
 end
