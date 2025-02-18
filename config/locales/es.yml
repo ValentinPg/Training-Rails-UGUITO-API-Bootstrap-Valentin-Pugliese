@@ -30,4 +30,11 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 es:
-  hello: "Hola Mundo!"
+  activerecord: 
+    errors:
+      models:
+        note:
+          attributes:
+            note_type:
+              shorter_review: 'La review debe ser más corta'
+

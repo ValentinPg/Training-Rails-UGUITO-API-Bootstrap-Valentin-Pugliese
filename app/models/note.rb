@@ -27,7 +27,7 @@ class Note < ApplicationRecord
 
   def review_cap
     if content_length != 'short' && note_type == 'review'
-      errors.add('A review must be shorter')
+      errors.add(:note_type, :shorter_review)
     end
   end
 end
