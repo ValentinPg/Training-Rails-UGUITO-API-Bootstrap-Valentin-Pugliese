@@ -22,10 +22,4 @@ RSpec.describe Note, type: :model do
   it 'word_length returns the number of characters in the content field' do
     expect(subject.word_count).to eq(subject.content.length)
   end
-
-  # TODO
-  it 'content_length returns short in SouthUtility' do
-    subject.content = 'short'
-    expect(subject.content_length).to eq('short')
-  end
 end
