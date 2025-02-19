@@ -26,7 +26,10 @@ class Note < ApplicationRecord
     utility.content_length_criteria(word_count)
   end
 
+  private
+
   def review_cap
-    errors.add(:note_type, :shorter_review) if content_length != 'short' && note_type == 'review'
+    return unless content_length != 'short' && note_type == 'review'
+    errors.add(:note_type, I18n.t('activerecord.errors.models.note.shorter_review'))
   end
 end
