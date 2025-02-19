@@ -21,15 +21,15 @@ RSpec.describe Note, type: :model do
     let(:north_user) { create(:user, utility: create(:north_utility)) }
     let(:long_review) { create(:note, note_type: 'review') }
 
-    it 'NorthUtility limit is 50' do
-      long_review.content = Faker::Lorem.words(number: 51).join(' ')
+    it 'NorthUtility' do
       long_review.user = north_user
+      long_review.content = Faker::Lorem.words(number: (long_review.utility.short + 1)).join(' ')
       expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     it 'SouthUtility limit is 60' do
-      long_review.content = Faker::Lorem.words(number: 61).join(' ')
       long_review.user = south_user
+      long_review.content = Faker::Lorem.words(number: (long_review.utility.short + 1)).join(' ')
       expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
