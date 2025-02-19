@@ -8,10 +8,39 @@ RSpec.describe Note, type: :model do
     it { is_expected.to validate_presence_of(:content) }
     it { is_expected.to validate_presence_of(:note_type) }
     it { is_expected.to belong_to(:user) }
+    it { expect { create(:note, note_type: 'rand') }.to raise_error(ArgumentError) }
   end
 
-  context 'when assigning an invalid note_type' do
-    it { expect { create(:note, note_type: 'rand') }.to raise_error(ArgumentError) }
+  describe '#word_count' do
+    let(:random) { rand(0..5) }
+    let(:simple_note) { create(:note, content: Faker::Lorem.words(number: random)) }
+
+    it { expect(simple_note.word_count).to eq(random) }
+  end
+
+  describe '#content_length' do
+    let(:critique) { create(:note, note_type: 'critique') }
+
+    context 'when content is short' do
+      it do
+        critique.update!(content: Faker::Lorem.words(number: critique.utility.short).join(' '))
+        expect(critique.content_length).to eq('short')
+      end
+    end
+
+    context 'when content is medium' do
+      it do
+        critique.update!(content: Faker::Lorem.words(number: (critique.utility.short + 1)).join(' '))
+        expect(critique.content_length).to eq('medium')
+      end
+    end
+
+    context 'when content is long' do
+      it do
+        critique.update!(content: Faker::Lorem.words(number: critique.utility.long + 1).join(' '))
+        expect(critique.content_length).to eq('long')
+      end
+    end
   end
 
   context 'when a note is a review' do
@@ -29,27 +58,4 @@ RSpec.describe Note, type: :model do
       it { expect { review.update!(content: long) }.to raise_error(ActiveRecord::RecordInvalid) }
     end
   end
-
 end
-
-#   context 'when a note is a critique' do
-
-#     context 'when is short, medium or long' do
-#     end
-# end
-# context 'when a note is a review and not short' do
-#   let(:south_user) { create(:user, utility: create(:south_utility)) }
-#   let(:north_user) { create(:user, utility: create(:north_utility)) }
-#   let(:long_review) { create(:note, note_type: 'review') } it 'NorthUtility' do
-#       long_review.user = north_user
-#       long_review.content = Faker::Lorem.words(number: (long_review.utility.short + 1)).join(' ')
-#       expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
-#     end
-
-#     it 'SouthUtility limit is 60' do
-#       long_review.user = south_user
-#       long_review.content = Faker::Lorem.words(number: (long_review.utility.short + 1)).join(' ')
-#       expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
-#     end
-#   end
-# end
