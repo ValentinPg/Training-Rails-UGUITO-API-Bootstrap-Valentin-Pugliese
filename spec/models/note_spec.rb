@@ -11,7 +11,7 @@ RSpec.describe Note, type: :model do
   end
 
   context 'when assigning a note_type' do
-    it 'note_type must be review or critique' do
+    it 'must be review or critique' do
       expect { note.note_type = 'rand' }.to raise_error(ArgumentError)
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe Note, type: :model do
     let(:long_review) { create(:note, note_type: 'review') }
 
     it 'NorthUtility limit is 50' do
-      long_review.content = 10.times.map { 'test' }
+      long_review.content = Faker::Lorem.words(number: 200).join(' ')
       expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
