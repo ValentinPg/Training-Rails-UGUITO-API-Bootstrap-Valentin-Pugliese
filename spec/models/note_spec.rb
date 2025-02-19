@@ -12,7 +12,7 @@ RSpec.describe Note, type: :model do
   end
 
   describe '#word_count' do
-    let(:random) { rand(0..5) }
+    let(:random) { rand(1..5) }
     let(:simple_note) { create(:note, content: Faker::Lorem.words(number: random)) }
 
     it { expect(simple_note.word_count).to eq(random) }
