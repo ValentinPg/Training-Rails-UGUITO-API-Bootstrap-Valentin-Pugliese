@@ -17,12 +17,19 @@ RSpec.describe Note, type: :model do
   end
 
   context 'when a note is a review and not short' do
-    let(:north_utility_user) { create(:user, utility: :north_utility) }
-    let(:south_utility_user) { create(:user, utility: :south_utility) }
+    let(:south_user) { create(:user, utility: create(:south_utility)) }
+    let(:north_user) { create(:user, utility: create(:north_utility)) }
     let(:long_review) { create(:note, note_type: 'review') }
 
     it 'NorthUtility limit is 50' do
-      long_review.content = Faker::Lorem.words(number: 200).join(' ')
+      long_review.content = Faker::Lorem.words(number: 51).join(' ')
+      long_review.user = north_user
+      expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it 'SouthUtility limit is 60' do
+      long_review.content = Faker::Lorem.words(number: 61).join(' ')
+      long_review.user = south_user
       expect { long_review.save! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
