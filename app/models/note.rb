@@ -14,7 +14,7 @@ class Note < ApplicationRecord
   belongs_to :user
   has_one :utility, through: :user
 
-  enum note_type: { "review": 0, "critique": 1 }
+  enum note_type: { review: 0, critique: 1 }
   validates :title, :content, :note_type, presence: true
   validate :review_cap, if: -> { utility.present? && content.present? }
 
