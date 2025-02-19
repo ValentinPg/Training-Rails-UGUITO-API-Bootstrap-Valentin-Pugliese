@@ -34,7 +34,5 @@ es:
     errors:
       models:
         note:
-          attributes:
-            note_type:
-              shorter_review: 'La review debe ser más corta'
+          shorter_review: 'La review debe ser más corta'
 
