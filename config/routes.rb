@@ -18,9 +18,10 @@ Rails.application.routes.draw do
         get :async, to: 'books#index_async'
       end
     end
+
+    resources :notes, only: [:index, :show]
   end
 
-  get '/notes', to: 'notes#index'
   get '/async_request/jobs/:id', to: 'async_request/jobs#show'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
