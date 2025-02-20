@@ -1,9 +1,9 @@
 class NorthUtility < Utility
-  def short?(length)
-    length <= 50
+  def short
+    50
   end
 
-  def medium?(length)
-    length > 50 && length <= 100
+  def long
+    100
   end
 end

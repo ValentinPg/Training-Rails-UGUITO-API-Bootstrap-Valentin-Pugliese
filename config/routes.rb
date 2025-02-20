@@ -18,9 +18,6 @@ Rails.application.routes.draw do
         get :async, to: 'books#index_async'
       end
     end
-    resource :users do
-      get :current
-    end
   end
 
   get '/async_request/jobs/:id', to: 'async_request/jobs#show'
