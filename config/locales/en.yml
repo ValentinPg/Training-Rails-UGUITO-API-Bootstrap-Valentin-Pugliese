@@ -29,12 +29,9 @@
 # To learn more, please read the Rails Internationalization guide
 # available at http://guides.rubyonrails.org/i18n.html.
 
-# en:
-#   activerecord: 
-#     errors:
-#       models:
-#         user:
-#           shorter_review : 'Prueba'
-
 en:
-  shorter_review: 'Reviews must be shorter'
+  activerecord: 
+    errors:
+      models:
+        note: 
+          shorter_review: 'Reviews must be shorter'
