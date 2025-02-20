@@ -52,8 +52,5 @@ module UguitoApi
     config.middleware.use ActionDispatch::Flash
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
-
-    # Internationalizer
-    config.i18n.default_locale = :es
   end
 end

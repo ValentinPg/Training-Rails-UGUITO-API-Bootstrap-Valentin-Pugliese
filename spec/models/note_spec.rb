@@ -6,7 +6,8 @@ RSpec.describe Note, type: :model do
   end
 
   it 'note_type must be review or critique' do
-    expect { note.note_type = 'rand' }.to raise_error(ArgumentError)
+    note.note_type = 'rand'
+    expect(note.save).to eq(false)
   end
 
   it { is_expected.to validate_presence_of(:title) }
