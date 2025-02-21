@@ -18,6 +18,8 @@ Rails.application.routes.draw do
         get :async, to: 'books#index_async'
       end
     end
+
+      resources :notes, only: [:index, :show]
   end
 
   get '/async_request/jobs/:id', to: 'async_request/jobs#show'
