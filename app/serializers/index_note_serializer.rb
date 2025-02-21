@@ -1,4 +1,4 @@
-class NoteSerializer < ActiveModel::Serializer
+class IndexNoteSerializer < ActiveModel::Serializer
   attributes :id, :title, :type, :content_length
 
   delegate :content_length, to: :object
