@@ -1,6 +1,7 @@
 module Api
   module V1
     class NotesController < ApplicationController
+      before_action :validate_type, only: [:index]
       def index
         render json: ordered_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
@@ -21,6 +22,15 @@ module Api
 
       def find_note
         Note.find(params[:id])
+      end
+
+      def validate_type
+        return if Note.note_types.include?(params[:type])
+        raise Exceptions::InvalidParameterError
+      end
+
+      def render_error(_msg)
+        render json: {message: I18n.t('activerecord.errors.models.note.invalid_type')}, status: :bad_request
       end
     end
   end
