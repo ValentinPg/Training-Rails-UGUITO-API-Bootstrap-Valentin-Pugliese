@@ -12,7 +12,7 @@ describe Api::V1::NotesController, type: :controller do
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
 
-      let!(:expected) { IndexNoteSerializer.new(notes_expected).to_json }
+      let!(:expected) { [IndexNoteSerializer.new(notes_expected).as_json.deep_stringify_keys] }
 
       context 'when fetching reviews' do
         before { get :index, params: { type: 'review', order: 'asc', page: 1, page_size: 1 } }
@@ -20,7 +20,7 @@ describe Api::V1::NotesController, type: :controller do
         let(:notes_expected) { review }
 
         it do
-          expect(response_body.to_json).to eq(expected)
+          expect(response_body).to eq(expected)
         end
 
         it { expect(response).to have_http_status(:ok) }
@@ -31,7 +31,7 @@ describe Api::V1::NotesController, type: :controller do
 
         let(:notes_expected) { critique }
 
-        it { expect(response_body.to_json).to eq(expected) }
+        it { expect(response_body).to eq(expected) }
 
         it { expect(response).to have_http_status(:ok) }
       end
