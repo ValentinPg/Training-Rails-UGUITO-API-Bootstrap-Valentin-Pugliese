@@ -86,13 +86,11 @@ describe Api::V1::NotesController, type: :controller do
       let(:expected) { ShowNoteSerializer.new(note).to_json }
 
       context 'when fetching a book' do
-        let(:note) { create(:note, user: user) }
+        let(:record) { create(:note, user: user) }
 
-        before { get :show, params: { id: note.id } }
+        before { get :show, params: { id: record.id } }
 
-        it { expect(response.body).to eq(expected) }
-
-        it { expect(response).to have_http_status(:ok) }
+        it_behaves_like 'basic show endpoint'
       end
     end
 
