@@ -7,24 +7,24 @@ module Api
       end
 
       def show
-        render json: find_note, status: :ok
+        render json: note, status: :ok
       end
 
       private
 
       def ordered_notes
-        find_notes.order(created_at: params[:order])
+        notes.order(created_at: params[:order])
       end
 
       def paged_notes
         ordered_notes.page(params[:page]).per(params[:page_size])
       end
 
-      def find_notes
+      def notes
         Note.where(note_type: params[:type])
       end
 
-      def find_note
+      def note
         Note.find(params[:id])
       end
 
@@ -38,6 +38,7 @@ module Api
       end
 
       def validate_order
+        params[:order] ||= 'asc'
         %w[asc desc].include?(params[:order])
       end
 
