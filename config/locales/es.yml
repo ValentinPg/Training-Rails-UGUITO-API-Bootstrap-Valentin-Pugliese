@@ -34,5 +34,6 @@ es:
     errors:
       models:
         note:
-          shorter_review: 'La review debe ser más corta'
-          invalid_parameter: 'Parametro incorrecto'
+          shorter_review: 'Una reseña no puede superar las 50 palabras.'
+          invalid_parameter: 'Faltan parametros requeridos.'
+          unprocessable_entity: 'El tipo de nota no es válido.'

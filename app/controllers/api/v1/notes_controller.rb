@@ -2,14 +2,12 @@ module Api
   module V1
     class NotesController < ApplicationController
       before_action :authenticate_user!
-      before_action :validate_params, only: [:index]
 
       rescue_from ActiveRecord::RecordInvalid, with:
-         :unprocessable_entity_rp
+         :bad_request_rp
 
-
-      rescue_from ArgumentError, with:
-         :render_error
+      # rescue_from ArgumentError, ActiveRecord::StatementInvalid, with:
+      #    :bad_request_rp
 
       def index
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
@@ -20,13 +18,14 @@ module Api
       end
 
       def create
-        nota = Note.create!(title: params[:note][:title], note_type: params[:note][:type],
+        Note.create!(title: params[:note][:title], note_type: params[:note][:type],
                             content: params[:note][:content], user_id: current_user.id)
-        render json: { message: 'Nota creada con exito' }
+        render json: { message: 'Nota creada con exito' }, status: :created
       end
 
       def ordered_notes
-        user_notes.order(created_at: params[:order])
+        params[:order] ||= 'asc'
+        notes.order(created_at: params[:order])
       end
 
       def paged_notes
@@ -45,27 +44,13 @@ module Api
         current_user.notes
       end
 
-      def validate_params
-        return if validate_type && validate_order
-        raise Exceptions::InvalidParameterError
-      end
-
-      def validate_type
-        Note.note_types.include?(params[:type])
-      end
-
-      def validate_order
-        params[:order] ||= 'asc'
-        %w[asc desc].include?(params[:order])
-      end
-
       def unprocessable_entity_rp(msg)
-        render json: { message: msg },
+        render json: { error: msg},
                status: :unprocessable_entity
       end
 
-      def render_error(msg)
-        render json: { message: msg },
+      def bad_request_rp(msg)
+        render json: { error: I18n.t('activerecord.errors.models.note.invalid_parameter')},
                status: :bad_request
       end
     end
