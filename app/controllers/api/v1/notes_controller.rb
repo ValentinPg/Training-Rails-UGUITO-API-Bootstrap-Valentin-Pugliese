@@ -3,6 +3,14 @@ module Api
     class NotesController < ApplicationController
       before_action :authenticate_user!
       before_action :validate_params, only: [:index]
+
+      rescue_from ActiveRecord::RecordInvalid, with:
+         :unprocessable_entity_rp
+
+
+      rescue_from ArgumentError, with:
+         :render_error
+
       def index
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
@@ -12,12 +20,10 @@ module Api
       end
 
       def create
-        note = Note.create!(title: params[:title], note_type: params[:type],
-                            content: params[:content], user_id: current_user.id)
-        render json: note, status: :ok
+        nota = Note.create!(title: params[:note][:title], note_type: params[:note][:type],
+                            content: params[:note][:content], user_id: current_user.id)
+        render json: { message: 'Nota creada con exito' }
       end
-
-      private
 
       def ordered_notes
         user_notes.order(created_at: params[:order])
@@ -53,8 +59,13 @@ module Api
         %w[asc desc].include?(params[:order])
       end
 
-      def render_error(_msg)
-        render json: { message: I18n.t('activerecord.errors.models.note.invalid_parameter') },
+      def unprocessable_entity_rp(msg)
+        render json: { message: msg },
+               status: :unprocessable_entity
+      end
+
+      def render_error(msg)
+        render json: { message: msg },
                status: :bad_request
       end
     end
