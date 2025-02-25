@@ -34,9 +34,23 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when ordering asc' do
+        before { get :index, params: { type: 'critique', order: 'asc' } }
+
+        let(:notes_expected) { critique }
+        let(:first_note) { Note.find(response_body.first['id']) }
+        let(:last_note) { Note.find(response_body.last['id']) }
+
+        it { expect(first_note.created_at).to be <= last_note.created_at }
       end
 
       context 'when ordering desc' do
+        before { get :index, params: { type: 'critique', order: 'desc' } }
+
+        let(:notes_expected) { critique }
+        let(:first_note) { Note.find(response_body.first['id']) }
+        let(:last_note) { Note.find(response_body.last['id']) }
+
+        it { expect(first_note.created_at).to be >= last_note.created_at }
       end
 
       context 'when passing invalid parameters' do
