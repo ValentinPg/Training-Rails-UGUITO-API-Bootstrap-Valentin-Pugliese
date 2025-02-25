@@ -35,4 +35,4 @@ es:
       models:
         note:
           shorter_review: 'La review debe ser más corta'
-          invalid_type: 'El tipo de nota es invalido'
+          invalid_parameter: 'Parametro incorrecto'
