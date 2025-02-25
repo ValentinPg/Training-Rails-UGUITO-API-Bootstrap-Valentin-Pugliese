@@ -11,6 +11,12 @@ module Api
         render json: note, status: :ok
       end
 
+      def create
+        note = Note.create!(title: params[:title], note_type: params[:type],
+                            content: params[:content], user_id: current_user.id)
+        render json: note, status: :ok
+      end
+
       private
 
       def ordered_notes
