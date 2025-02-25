@@ -83,8 +83,6 @@ describe Api::V1::NotesController, type: :controller do
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
 
-      let(:expected) { ShowNoteSerializer.new(note).to_json }
-
       context 'when fetching a book' do
         let(:record) { create(:note, user: user) }
 
