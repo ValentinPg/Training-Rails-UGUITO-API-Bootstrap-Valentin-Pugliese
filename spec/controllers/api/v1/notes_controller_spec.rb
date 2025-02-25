@@ -14,19 +14,17 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when fetching reviews' do
-        before { get :index, params: { type: 'review', order: 'asc', page: 1, page_size: 1 } }
+        before { get :index, params: { type: 'review', order: 'asc' } }
 
         let(:notes_expected) { review }
 
-        it do
-          expect(response_body.to_json).to eq(expected)
-        end
+        it { expect(response_body.to_json).to eq(expected) }
 
         it { expect(response).to have_http_status(:ok) }
       end
 
       context 'when fetching critiques' do
-        before { get :index, params: { type: 'critique', order: 'asc', page: 1, page_size: 1 } }
+        before { get :index, params: { type: 'critique', order: 'asc' } }
 
         let(:notes_expected) { critique }
 
@@ -64,6 +62,32 @@ describe Api::V1::NotesController, type: :controller do
       before { get :index }
 
       it_behaves_like 'unauthorized'
+    end
+  end
+
+  describe 'GET #show' do
+    context 'when there is a user logged in' do
+      include_context 'with authenticated user'
+
+      let(:expected) { ShowNoteSerializer.new(note).to_json }
+
+      context 'when fetching a book' do
+        let(:note) { create(:note, user: user) }
+
+        before { get :show, params: { id: note.id } }
+
+        it { expect(response.body).to eq(expected) }
+
+        it { expect(response).to have_http_status(:ok) }
+      end
+    end
+
+    context 'when the user is not authenticated' do
+      context 'when fetching an book' do
+        before { get :show, params: { id: Faker::Number.number } }
+
+        it_behaves_like 'unauthorized'
+      end
     end
   end
 end
