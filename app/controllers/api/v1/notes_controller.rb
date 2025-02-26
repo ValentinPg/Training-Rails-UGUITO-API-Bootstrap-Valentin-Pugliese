@@ -1,8 +1,9 @@
 module Api
   module V1
     class NotesController < ApplicationController
-      before_action :validate_params, only: [:index]
       def index
+        # hacer con return unless y render error
+        raise Exceptions::InvalidParameterError unless validate_params
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -29,8 +30,7 @@ module Api
       end
 
       def validate_params
-        return if validate_type && validate_order
-        raise Exceptions::InvalidParameterError
+        validate_type && validate_order
       end
 
       def validate_type
