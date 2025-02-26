@@ -5,6 +5,14 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
   skip_before_action :verify_authenticity_token
   before_action :configure_permitted_parameters, if: :devise_controller?
+  rescue_from ActiveRecord::RecordInvalid, with:
+     :bad_request_rp
+
+  rescue_from Exceptions::NoteContentError, with:
+  :note_content_rp
+
+  rescue_from ArgumentError, ActiveRecord::StatementInvalid, with:
+     :unprocessable_entity_rp
 
   private
 

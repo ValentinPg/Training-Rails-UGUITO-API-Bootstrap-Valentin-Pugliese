@@ -54,11 +54,11 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when passing invalid parameters' do
-        before { get :index, params: {} }
+        before { get :index, params: { type: 'test' } }
 
         let(:notes_expected) { critique }
 
-        it { expect(response).to have_http_status(:bad_request) }
+        it { expect(response).to have_http_status(:unprocessable_entity) }
       end
 
       context 'when passing page_size and page' do
@@ -98,6 +98,52 @@ describe Api::V1::NotesController, type: :controller do
 
         it_behaves_like 'unauthorized'
       end
+    end
+  end
+
+  describe 'POST #create' do
+    let(:note_content) { { title: random_text, content: random_text, type: random_type } }
+    let(:random_text) { Faker::Lorem.words(number: 5).join(' ') }
+    let(:random_type) { Note.note_types.keys.sample }
+
+    context 'when there is a user logged in' do
+      include_context 'with authenticated user'
+      before { post :create, params: { note: note_content } }
+
+      let(:created_note) { user.notes.where(title: note_content[:title]) }
+
+      context 'when creating a note' do
+        it { expect(response).to have_http_status(:created) }
+        it { expect(created_note.exists?).to be true }
+      end
+
+      context 'when invalid wrong note_type' do
+        let(:note_content) { { title: random_text, content: random_text, type: 'test' } }
+        let(:message) { I18n.t('activerecord.errors.models.note.unprocessable_entity') }
+
+        it_behaves_like 'unprocessable entity with message'
+      end
+
+      context 'when missing params' do
+        let(:note_content) { { title: random_text } }
+        let(:message) { I18n.t('activerecord.errors.models.note.invalid_parameter') }
+
+        it_behaves_like 'bad request with message'
+      end
+
+      context 'when exceeding the review limit' do
+        let(:random_text) { Faker::Lorem.words(number: user.utility.long).join(' ') }
+        let(:random_type) { 'review' }
+        let(:message) { I18n.t('activerecord.errors.models.note.shorter_review') }
+
+        it_behaves_like 'unprocessable entity with message'
+      end
+    end
+
+    context 'when there is no user logged in' do
+      before { post :create, params: { note: note_content } }
+
+      it_behaves_like 'unauthorized'
     end
   end
 end
