@@ -2,8 +2,7 @@ module Api
   module V1
     class NotesController < ApplicationController
       def index
-        # hacer con return unless y render error
-        raise Exceptions::InvalidParameterError unless validate_params
+        raise Exceptions::InvalidParameterError unless validate_type
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -14,7 +13,7 @@ module Api
       private
 
       def ordered_notes
-        notes.order(created_at: params[:order])
+        validate_order ? notes.order(created_at: params[:order]) : notes
       end
 
       def paged_notes
@@ -29,17 +28,15 @@ module Api
         Note.find(params[:id])
       end
 
-      def validate_params
-        validate_type && validate_order
-      end
-
       def validate_type
         Note.note_types.include?(params[:type])
       end
 
       def validate_order
-        params[:order] ||= 'asc'
-        %w[asc desc].include?(params[:order])
+        unless (params.key?(:order) && %w[asc
+                                          desc].include?(params[:order])) || !params.key?(:order)
+          raise Exceptions::InvalidParameterError
+        end
       end
 
       def render_error(_msg)
