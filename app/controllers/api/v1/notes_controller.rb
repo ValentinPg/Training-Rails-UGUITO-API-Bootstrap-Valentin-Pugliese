@@ -20,8 +20,7 @@ module Api
       end
 
       def ordered_notes
-        params[:order] ||= 'asc'
-        notes.order(created_at: params[:order])
+        validate_order ? notes.order(created_at: params[:order]) : notes
       end
 
       def paged_notes
@@ -40,16 +39,20 @@ module Api
         current_user.notes
       end
 
+      def validate_order
+        params.key?(:order)
+      end
+
+      def note_content_rp
+        render_error('activerecord.errors.models.note.shorter_review', :unprocessable_entity)
+      end
+
       def unprocessable_entity_msg
         'activerecord.errors.models.note.unprocessable_entity'
       end
 
       def bad_request_msg
         'activerecord.errors.models.note.invalid_parameter'
-      end
-
-      def note_content_rp
-        render_error('activerecord.errors.models.note.shorter_review', :unprocessable_entity)
       end
     end
   end
