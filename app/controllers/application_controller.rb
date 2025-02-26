@@ -8,9 +8,6 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordInvalid, with:
      :bad_request_rp
 
-  rescue_from Exceptions::NoteContentError, with:
-  :note_content_rp
-
   rescue_from ArgumentError, ActiveRecord::StatementInvalid, with:
      :unprocessable_entity_rp
 
@@ -60,5 +57,18 @@ class ApplicationController < ActionController::Base
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[first_name last_name document_number])
+  end
+
+  def unprocessable_entity_rp
+    render_error(unprocessable_entity_msg, :unprocessable_entity)
+  end
+
+  def bad_request_rp
+    render_error(bad_request_msg, :bad_request)
+  end
+
+  def render_error(msg, status)
+    render json: { error: I18n.t(msg) },
+           status: status
   end
 end

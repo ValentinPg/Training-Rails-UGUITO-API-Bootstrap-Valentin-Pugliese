@@ -3,6 +3,8 @@ module Api
     class NotesController < ApplicationController
       before_action :authenticate_user!
 
+      rescue_from Exceptions::NoteContentError, with:
+      :note_content_rp
       def index
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
@@ -38,19 +40,16 @@ module Api
         current_user.notes
       end
 
-      def unprocessable_entity_rp
-        render json: { error: I18n.t('activerecord.errors.models.note.unprocessable_entity') },
-               status: :unprocessable_entity
+      def unprocessable_entity_msg
+        'activerecord.errors.models.note.unprocessable_entity'
       end
 
-      def bad_request_rp
-        render json: { error: I18n.t('activerecord.errors.models.note.invalid_parameter') },
-               status: :bad_request
+      def bad_request_msg
+        'activerecord.errors.models.note.invalid_parameter'
       end
 
       def note_content_rp
-        render json: { error: I18n.t('activerecord.errors.models.note.shorter_review') },
-               status: :unprocessable_entity
+        render_error('activerecord.errors.models.note.shorter_review', :unprocessable_entity)
       end
     end
   end
