@@ -70,6 +70,17 @@ describe Api::V1::NotesController, type: :controller do
 
         it { expect(response_body.to_json).to eq(expected) }
       end
+
+      context 'when cehcking serializer attributes' do
+        before { get :index, params: { type: 'review' } }
+
+        let(:notes_expected) { review }
+        let(:body) { JSON.parse(expected) }
+
+        %w[id title type content_length].each do |attribute|
+          it { expect(body.first.keys).to include(attribute) }
+        end
+      end
     end
 
     context 'when there is not a user logged in' do
@@ -83,12 +94,21 @@ describe Api::V1::NotesController, type: :controller do
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
 
-      context 'when fetching a book' do
-        let(:record) { create(:note, user: user) }
+      let(:record) { create(:note, user: user) }
 
+      context 'when fetching a book' do
         before { get :show, params: { id: record.id } }
 
         it_behaves_like 'basic show endpoint'
+      end
+
+      context 'when cehcking serializer attributes' do
+        let(:body) { JSON.parse(response_body.to_json) }
+        let(:expected) { %w[id title type content_length word_count created_at content user].to_set }
+
+        before { get :show, params: { id: record.id } }
+
+        it { expect(body.keys.to_set.difference(expected)).to be_empty }
       end
     end
 
