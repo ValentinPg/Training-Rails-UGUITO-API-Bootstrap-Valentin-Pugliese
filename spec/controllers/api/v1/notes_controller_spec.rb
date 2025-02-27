@@ -2,9 +2,17 @@ require 'rails_helper'
 
 describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
+    let(:type) { Note.note_types.keys.sample }
 
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
+
+      let(:notes) { create_list(:note, 5, note_type: type, user: user) }
+
+      before do
+        notes
+        get :index, params: { type: type }
+      end
 
       context 'when fetching data' do
         let!(:expected) do
@@ -13,12 +21,7 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         context 'when fetching reviews' do
-          before do
-            notes
-            get :index, params: { type: 'review' }
-          end
-
-          let(:notes) { create_list(:note, 3, note_type: 'review', user: user) }
+          let(:type) { 'review' }
 
           it { expect(response_body.to_json).to eq(expected) }
 
@@ -26,12 +29,7 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         context 'when fetching critiques' do
-          before do
-            notes
-            get :index, params: { type: 'critique' }
-          end
-
-          let(:notes) { create_list(:note, 3, note_type: 'critique', user: user) }
+          let(:type) { 'critique' }
 
           it { expect(response_body.to_json).to eq(expected) }
 
@@ -49,9 +47,6 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         context 'when checking serializer attributes' do
-          before { get :index, params: { type: 'review' } }
-
-          let(:notes) { create_list(:note, 3, 'review', user: user) }
           let(:body) { JSON.parse(expected) }
 
           %w[id title type content_length].each do |attribute|
@@ -65,24 +60,19 @@ describe Api::V1::NotesController, type: :controller do
         let(:first_note) { Note.find(response_body[random_item]['id']) }
         let(:last_note) { Note.find(response_body[random_item + 1]['id']) }
 
-        let(:notes) { create_list(:note, 20, user: user) }
+        before do
+          notes
+          get :index, params: { type: type, order: order }
+        end
 
         context 'with order asc' do
-          before do
-            notes
-            get :index, params: { type: 'critique', order: 'asc' }
-          end
+          let(:order) { 'asc' }
 
-          it {
-            expect(first_note.created_at).to be <= last_note.created_at
-          }
+          it { expect(first_note.created_at).to be <= last_note.created_at }
         end
 
         context 'with order desc' do
-          before do
-            notes
-            get :index, params: { type: 'critique', order: 'desc' }
-          end
+          let(:order) { 'desc' }
 
           it { expect(first_note.created_at).to be >= last_note.created_at }
         end
