@@ -2,73 +2,86 @@ require 'rails_helper'
 
 describe Api::V1::NotesController, type: :controller do
   describe 'GET #index' do
-    let(:review) { create_list(:note, 3, note_type: 'review', user: user) }
-    let(:critique) { create_list(:note, 3, note_type: 'critique', user: user) }
+    let(:type) { Note.note_types.keys.sample }
 
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
 
-      let!(:expected) do
-        ActiveModel::Serializer::CollectionSerializer.new(notes_expected,
-                                                          serializer: IndexNoteSerializer).to_json
+      let(:notes) { create_list(:note, 5, note_type: type, user: user) }
+
+      before do
+        notes
+        get :index, params: { type: type }
       end
 
-      context 'when fetching reviews' do
-        before { get :index, params: { type: 'review', order: 'asc' } }
+      context 'when fetching data' do
+        let!(:expected) do
+          ActiveModel::Serializer::CollectionSerializer.new(notes,
+                                                            serializer: IndexNoteSerializer).to_json
+        end
 
-        let(:notes_expected) { review }
+        context 'when fetching reviews' do
+          let(:type) { 'review' }
 
-        it { expect(response_body.to_json).to eq(expected) }
+          it { expect(response_body.to_json).to eq(expected) }
 
-        it { expect(response).to have_http_status(:ok) }
+          it { expect(response).to have_http_status(:ok) }
+        end
+
+        context 'when fetching critiques' do
+          let(:type) { 'critique' }
+
+          it { expect(response_body.to_json).to eq(expected) }
+
+          it { expect(response).to have_http_status(:ok) }
+        end
+
+        context 'when passing page_size and page' do
+          let(:page) { 1 }
+          let(:page_size) { 2 }
+          let(:test_subject) { user.notes }
+
+          before { get :index, params: { type: type, page: page, page_size: page_size } }
+
+          it_behaves_like 'test pagination'
+        end
+
+        context 'when checking serializer attributes' do
+          let(:body) { JSON.parse(expected) }
+
+          %w[id title type content_length].each do |attribute|
+            it { expect(body.first.keys).to include(attribute) }
+          end
+        end
       end
 
-      context 'when fetching critiques' do
-        before { get :index, params: { type: 'critique', order: 'asc' } }
+      context 'when ordering results' do
+        let(:random_item) { rand(0..(response_body.length - 2)) }
+        let(:first_note) { Note.find(response_body[random_item]['id']) }
+        let(:last_note) { Note.find(response_body[random_item + 1]['id']) }
 
-        let(:notes_expected) { critique }
+        before do
+          notes
+          get :index, params: { type: type, order: order }
+        end
 
-        it { expect(response_body.to_json).to eq(expected) }
+        context 'with order asc' do
+          let(:order) { 'asc' }
 
-        it { expect(response).to have_http_status(:ok) }
-      end
+          it { expect(first_note.created_at).to be <= last_note.created_at }
+        end
 
-      context 'when ordering asc' do
-        before { get :index, params: { type: 'critique', order: 'asc' } }
+        context 'with order desc' do
+          let(:order) { 'desc' }
 
-        let(:notes_expected) { critique }
-        let(:first_note) { Note.find(response_body.first['id']) }
-        let(:last_note) { Note.find(response_body.last['id']) }
-
-        it { expect(first_note.created_at).to be <= last_note.created_at }
-      end
-
-      context 'when ordering desc' do
-        before { get :index, params: { type: 'critique', order: 'desc' } }
-
-        let(:notes_expected) { critique }
-        let(:first_note) { Note.find(response_body.first['id']) }
-        let(:last_note) { Note.find(response_body.last['id']) }
-
-        it { expect(first_note.created_at).to be >= last_note.created_at }
+          it { expect(first_note.created_at).to be >= last_note.created_at }
+        end
       end
 
       context 'when passing invalid parameters' do
         before { get :index, params: { type: 'test' } }
 
-        let(:notes_expected) { critique }
-
         it { expect(response).to have_http_status(:unprocessable_entity) }
-      end
-
-      context 'when passing page_size and page' do
-        let(:page) { 1 }
-        let(:page_size) { 2 }
-        let(:notes_expected) { critique.first(2) }
-
-        before { get :index, params: { type: 'critique', order: 'asc', page: page, page_size: page_size } }
-
-        it { expect(response_body.to_json).to eq(expected) }
       end
     end
 
@@ -89,6 +102,15 @@ describe Api::V1::NotesController, type: :controller do
         before { get :show, params: { id: record.id } }
 
         it_behaves_like 'basic show endpoint'
+      end
+
+      context 'when checking serializer attributes' do
+        let(:body) { JSON.parse(response_body.to_json) }
+        let(:expected) { %w[id title type content_length word_count created_at content user].to_set }
+
+        before { get :show, params: { id: record.id } }
+
+        it { expect(body.keys.to_set.difference(expected)).to be_empty }
       end
     end
 
