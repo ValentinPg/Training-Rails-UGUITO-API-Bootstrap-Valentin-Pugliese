@@ -28,9 +28,9 @@ module Api
       end
 
       def note
-        user_notes(params[:id])
+        user_notes.find(params[:id])
       end
-      
+
       def user_notes
         current_user.notes
       end
