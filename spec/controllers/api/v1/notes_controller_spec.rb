@@ -39,11 +39,11 @@ describe Api::V1::NotesController, type: :controller do
         context 'when passing page_size and page' do
           let(:page) { 1 }
           let(:page_size) { 2 }
-          let(:notes) { create_list(:note, 2, note_type: 'critique', user: user) }
+          let(:test_subject) {user.notes}
 
-          before { get :index, params: { type: 'critique', page: page, page_size: page_size } }
+          before { get :index, params: { type: type, page: page, page_size: page_size } }
 
-          it { expect(response_body.to_json).to eq(expected) }
+          it_behaves_like 'test pagination'
         end
 
         context 'when checking serializer attributes' do
@@ -68,7 +68,7 @@ describe Api::V1::NotesController, type: :controller do
         context 'with order asc' do
           let(:order) { 'asc' }
 
-          it { expect(first_note.created_at).to be <= last_note.created_at }
+          it {expect(first_note.created_at).to be <= last_note.created_at}
         end
 
         context 'with order desc' do
