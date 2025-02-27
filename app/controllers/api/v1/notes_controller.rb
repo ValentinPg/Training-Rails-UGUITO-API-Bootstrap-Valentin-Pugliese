@@ -16,7 +16,7 @@ module Api
       def create
         Note.create!(title: params[:note][:title], note_type: params[:note][:type],
                      content: params[:note][:content], user_id: current_user.id)
-        render json: { message: 'Nota creada con exito' }, status: :created
+        render json: { message: I18n.t('activerecord.models.note.created_with_success') }, status: :created
       end
 
       def ordered_notes
