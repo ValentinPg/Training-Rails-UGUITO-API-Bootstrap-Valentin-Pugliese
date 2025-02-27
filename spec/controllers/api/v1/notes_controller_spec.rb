@@ -33,28 +33,27 @@ describe Api::V1::NotesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
       end
 
-      context 'when ordering asc' do
-        before { get :index, params: { type: 'critique', order: 'asc' } }
-
+      context 'when ordering results' do
         let(:notes_expected) { critique }
-        let(:first_note) { Note.find(response_body.first['id']) }
-        let(:last_note) { Note.find(response_body.last['id']) }
+        let(:random_item) { rand(0..(response_body.length - 2)) }
+        let(:first_note) { Note.find(response_body[random_item]['id']) }
+        let(:last_note) { Note.find(response_body[random_item + 1]['id']) }
 
-        it { expect(first_note.created_at).to be <= last_note.created_at }
-      end
+        context 'with order asc' do
+          before { get :index, params: { type: 'critique', order: 'asc' } }
 
-      context 'when ordering desc' do
-        before { get :index, params: { type: 'critique', order: 'desc' } }
+          it { expect(first_note.created_at).to be <= last_note.created_at }
+        end
 
-        let(:notes_expected) { critique }
-        let(:first_note) { Note.find(response_body.first['id']) }
-        let(:last_note) { Note.find(response_body.last['id']) }
+        context 'with order desc' do
+          before { get :index, params: { type: 'critique', order: 'desc' } }
 
-        it { expect(first_note.created_at).to be >= last_note.created_at }
+          it { expect(first_note.created_at).to be >= last_note.created_at }
+        end
       end
 
       context 'when passing invalid parameters' do
-        before { get :index, params: {} }
+        before { get :index, params: { type: 'test' } }
 
         let(:notes_expected) { critique }
 
@@ -94,9 +93,9 @@ describe Api::V1::NotesController, type: :controller do
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
 
-      context 'when fetching a book' do
-        let(:record) { create(:note, user: user) }
+      let(:record) { create(:note, user: user) }
 
+      context 'when fetching a book' do
         before { get :show, params: { id: record.id } }
 
         it_behaves_like 'basic show endpoint'
