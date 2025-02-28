@@ -37,13 +37,14 @@ describe Api::V1::NotesController, type: :controller do
         end
 
         context 'when passing page_size and page' do
-          let(:page) { 1 }
-          let(:page_size) { 2 }
+          let(:random_number) { Faker::Number.between(from: 1, to: 30) }
+          let(:page) { random_number }
+          let(:page_size) { random_number }
           let(:test_subject) { user.notes }
 
           before { get :index, params: { type: type, page: page, page_size: page_size } }
 
-          it_behaves_like 'test pagination'
+          it_behaves_like 'paginated resource'
         end
 
         context 'when checking serializer attributes' do
@@ -110,7 +111,7 @@ describe Api::V1::NotesController, type: :controller do
 
         before { get :show, params: { id: record.id } }
 
-        it { expect(body.keys.to_set.difference(expected)).to be_empty }
+        it { expect(response_body.keys).to match_array(expected) }
       end
     end
 
