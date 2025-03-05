@@ -46,14 +46,12 @@ describe Api::V1::NotesController, type: :controller do
 
           it_behaves_like 'paginated resource'
         end
+      end
 
-        context 'when checking serializer attributes' do
-          let(:body) { JSON.parse(expected) }
+      context 'when checking serializer attributes' do
+        let(:expected) { %w[id title type content_length] }
 
-          %w[id title type content_length].each do |attribute|
-            it { expect(body.first.keys).to include(attribute) }
-          end
-        end
+        it { expect(response_body.sample.keys).to match_array(expected) }
       end
 
       context 'when ordering results' do
@@ -106,7 +104,7 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when checking serializer attributes' do
-        let(:expected) { %w[id title type content_length word_count created_at content user].to_set }
+        let(:expected) { %w[id title type content_length word_count created_at content user] }
 
         before { get :show, params: { id: record.id } }
 
