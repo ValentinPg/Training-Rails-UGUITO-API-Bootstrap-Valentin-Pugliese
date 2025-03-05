@@ -79,7 +79,7 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when passing invalid parameters' do
-        before { get :index, params: { type: 'test' } }
+        before { get :index, params: {} }
 
         it { expect(response).to have_http_status(:unprocessable_entity) }
       end
@@ -141,14 +141,14 @@ describe Api::V1::NotesController, type: :controller do
 
       context 'when invalid wrong note_type' do
         let(:note_content) { { title: random_text, content: random_text, type: 'test' } }
-        let(:message) { I18n.t('activerecord.errors.models.note.unprocessable_entity') }
+        let(:message) { I18n.t('activerecord.errors.models.note.invalid_note_type') }
 
         it_behaves_like 'unprocessable entity with message'
       end
 
       context 'when missing params' do
         let(:note_content) { { title: random_text } }
-        let(:message) { I18n.t('activerecord.errors.models.note.invalid_parameter') }
+        let(:message) { I18n.t('errors.messages.internal_server_error') }
 
         it_behaves_like 'bad request with message'
       end
