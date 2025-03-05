@@ -125,7 +125,7 @@ describe Api::V1::NotesController, type: :controller do
 
   describe 'POST #create' do
     let(:note_content) { { title: random_text, content: random_text, type: random_type } }
-    let(:random_text) { Faker::Lorem.words(number: 5).join(' ') }
+    let(:random_text) { Faker::Lorem.sentence(word_count: 5)}
     let(:random_type) { Note.note_types.keys.sample }
 
     context 'when there is a user logged in' do
