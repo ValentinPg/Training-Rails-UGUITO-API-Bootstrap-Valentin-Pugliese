@@ -106,7 +106,6 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when checking serializer attributes' do
-        let(:body) { JSON.parse(response_body.to_json) }
         let(:expected) { %w[id title type content_length word_count created_at content user].to_set }
 
         before { get :show, params: { id: record.id } }
