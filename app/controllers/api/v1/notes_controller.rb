@@ -1,10 +1,8 @@
 module Api
   module V1
     class NotesController < ApplicationController
-      rescue_from ActiveRecord::StatementInvalid, ArgumentError, with:
-      :render_error
-
       def index
+        return render_error unless validate_type
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -34,9 +32,13 @@ module Api
         params[:order].present?
       end
 
-      def render_error(_msg)
+      def render_error
         render json: { message: I18n.t('activerecord.errors.models.note.invalid_parameter') },
                status: :bad_request
+      end
+
+      def validate_type
+        Note.note_types.include?(params[:type])
       end
     end
   end
