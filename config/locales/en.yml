@@ -29,14 +29,17 @@
 # To learn more, please read the Rails Internationalization guide
 # available at http://guides.rubyonrails.org/i18n.html.
 
+
 en:
+  errors:
+    messages:
+      internal_server_error: 'Required parameters missing'
   activerecord: 
     errors:
       models:
         note:
           shorter_review: 'Reviews must be shorter'
-          invalid_parameter: 'Required parameters are missing'
-          unprocessable_entity: 'Invalid type'
+          invalid_note_type: 'Invalid Type'
     models:
       note:
         created_with_success: 'Note succesfully created'

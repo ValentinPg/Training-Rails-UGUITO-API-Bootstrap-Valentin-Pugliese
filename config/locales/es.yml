@@ -30,13 +30,15 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 es:
+  errors:
+    messages:
+      internal_server_error: 'Faltan parametros requeridos.'
   activerecord: 
     errors:
       models:
         note:
           shorter_review: 'Una reseña no puede superar las 50 palabras.'
-          invalid_parameter: 'Faltan parametros requeridos.'
-          unprocessable_entity: 'El tipo de nota no es válido.'
+          invalid_note_type: 'El tipo de nota no es válido.'
     models:
       note:
         created_with_success: 'Nota creada con éxito'

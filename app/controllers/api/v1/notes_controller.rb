@@ -3,8 +3,6 @@ module Api
     class NotesController < ApplicationController
       before_action :authenticate_user!
 
-      rescue_from Exceptions::NoteContentError, with:
-      :note_content_rp
       def index
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
@@ -23,7 +21,8 @@ module Api
       private
 
       def create_params
-        params.require(:note).permit(:title, :content, :type)
+        require_nested({ 'title': true, 'content': true, 'type': true }, params[:note])
+        params[:note]
       end
 
       def ordered_notes
@@ -48,18 +47,6 @@ module Api
 
       def validate_order
         params.key?(:order)
-      end
-
-      def note_content_rp
-        render_error('activerecord.errors.models.note.shorter_review', :unprocessable_entity)
-      end
-
-      def unprocessable_entity_msg
-        'activerecord.errors.models.note.unprocessable_entity'
-      end
-
-      def bad_request_msg
-        'activerecord.errors.models.note.invalid_parameter'
       end
     end
   end
