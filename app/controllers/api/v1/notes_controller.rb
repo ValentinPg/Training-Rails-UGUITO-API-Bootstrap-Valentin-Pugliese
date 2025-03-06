@@ -38,6 +38,7 @@ module Api
 
       def index_async_params
         params.require(:author)
+        params
       end
 
       def ordered_notes
