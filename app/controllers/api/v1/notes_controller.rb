@@ -11,6 +11,11 @@ module Api
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
 
+      def index_async
+        response = execute_async(RetrieveNotesWorker, current_user.id, index_async_params)
+        async_custom_response(response)
+      end
+
       def show
         render json: note, status: :ok
       end
@@ -29,6 +34,10 @@ module Api
       def create_params
         require_nested({ 'title': true, 'content': true, 'type': true }, params[:note])
         valid_type?(params[:note][:type])
+      end
+
+      def index_async_params
+        params.require(:author)
       end
 
       def ordered_notes
