@@ -7,7 +7,7 @@ module UtilityService
         }
       end
 
-      def retrieve_notes
+      def retrieve_notes(params)
         {
           autor: params['author']
         }
