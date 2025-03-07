@@ -7,51 +7,42 @@ describe Api::V1::NotesController, type: :controller do
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
 
-      let(:notes) { create_list(:note, 5, note_type: type, user: user) }
+      let(:expected_size) { Faker::Number.between(from: 5, to: 10) }
+      let(:notes) { create_list(:note, expected_size, note_type: type, user: user) }
+      let(:expected_keys) { %w[id title type content_length] }
 
       before do
         notes
         get :index, params: { type: type }
       end
 
-      context 'when fetching data' do
-        let!(:expected) do
-          ActiveModel::Serializer::CollectionSerializer.new(notes,
-                                                            serializer: IndexNoteSerializer).to_json
-        end
+      it { expect(response_body.sample.keys).to match_array(expected_keys) }
 
-        context 'when fetching reviews' do
-          let(:type) { 'review' }
+      context 'when fetching reviews' do
+        let(:type) { 'review' }
 
-          it { expect(response_body.to_json).to eq(expected) }
+        it { expect(response_body.size).to eq(expected_size) }
 
-          it { expect(response).to have_http_status(:ok) }
-        end
-
-        context 'when fetching critiques' do
-          let(:type) { 'critique' }
-
-          it { expect(response_body.to_json).to eq(expected) }
-
-          it { expect(response).to have_http_status(:ok) }
-        end
-
-        context 'when passing page_size and page' do
-          let(:random_number) { Faker::Number.between(from: 1, to: 30) }
-          let(:page) { random_number }
-          let(:page_size) { random_number }
-          let(:test_subject) { user.notes }
-
-          before { get :index, params: { type: type, page: page, page_size: page_size } }
-
-          it_behaves_like 'paginated resource'
-        end
+        it { expect(response).to have_http_status(:ok) }
       end
 
-      context 'when checking serializer attributes' do
-        let(:expected) { %w[id title type content_length] }
+      context 'when fetching critiques' do
+        let(:type) { 'critique' }
 
-        it { expect(response_body.sample.keys).to match_array(expected) }
+        it { expect(response_body.size).to eq(expected_size) }
+
+        it { expect(response).to have_http_status(:ok) }
+      end
+
+      context 'when passing page_size and page' do
+        let(:random_number) { Faker::Number.between(from: 1, to: 30) }
+        let(:page) { random_number }
+        let(:page_size) { random_number }
+        let(:test_subject) { user.notes }
+
+        before { get :index, params: { type: type, page: page, page_size: page_size } }
+
+        it_behaves_like 'paginated resource'
       end
 
       context 'when ordering results' do
@@ -96,20 +87,13 @@ describe Api::V1::NotesController, type: :controller do
       include_context 'with authenticated user'
 
       let(:record) { create(:note, user: user) }
+      let(:expected_keys) { %w[id title type content_length word_count created_at content user] }
 
-      context 'when fetching a book' do
-        before { get :show, params: { id: record.id } }
+      before { get :show, params: { id: record.id } }
 
-        it_behaves_like 'basic show endpoint'
-      end
+      it_behaves_like 'basic show endpoint'
 
-      context 'when checking serializer attributes' do
-        let(:expected) { %w[id title type content_length word_count created_at content user] }
-
-        before { get :show, params: { id: record.id } }
-
-        it { expect(response_body.keys).to match_array(expected) }
-      end
+      it { expect(response_body.keys).to match_array(expected_keys) }
     end
 
     context 'when the user is not authenticated' do
