@@ -125,7 +125,7 @@ describe Api::V1::NotesController, type: :controller do
 
   describe 'POST #create' do
     let(:note_content) { { title: random_text, content: random_text, type: random_type } }
-    let(:random_text) { Faker::Lorem.sentence(word_count: 5)}
+    let(:random_text) { Faker::Lorem.sentence(word_count: 5) }
     let(:random_type) { Note.note_types.keys.sample }
 
     context 'when there is a user logged in' do
@@ -166,6 +166,43 @@ describe Api::V1::NotesController, type: :controller do
       before { post :create, params: { note: note_content } }
 
       it_behaves_like 'unauthorized'
+    end
+  end
+
+  describe 'GET #index_async' do
+    context 'when the user is authenticated' do
+      include_context 'with authenticated user'
+
+      let(:author) { Faker::Book.author }
+      let(:params) { { author: author } }
+      let(:worker_name) { 'RetrieveNotesWorker' }
+      let(:parameters) { [params] }
+
+      before { get :index_async, params: params }
+
+      it 'returns status code accepted' do
+        expect(response).to have_http_status(:accepted)
+      end
+
+      it 'returns the response id and url to retrive the data later' do
+        expect(response_body.keys).to contain_exactly('response', 'job_id', 'url')
+      end
+
+      it 'enqueues a job' do
+        expect(AsyncRequest::JobProcessor.jobs.size).to eq(1)
+      end
+
+      it 'creates the right job' do
+        expect(AsyncRequest::Job.last.worker).to eq(worker_name)
+      end
+    end
+
+    context 'when the user is not authenticated' do
+      before { get :index_async }
+
+      it 'returns status code unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end
