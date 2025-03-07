@@ -1,8 +1,6 @@
 class NoteSerializer < ActiveModel::Serializer
   attributes :id, :title, :type, :word_count, :created_at, :content, :content_length
-  belongs_to :user, serializer: UserSerializer
-
-  delegate :word_count, :content_length, to: :object
+  belongs_to :user
 
   def type
     object.note_type
