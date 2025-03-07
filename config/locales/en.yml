@@ -31,6 +31,9 @@
 
 
 en:
+  success:
+    messages:
+      created_with_success: 'Note succesfully created'
   errors:
     messages:
       internal_server_error: 'Required parameters missing'
@@ -41,6 +44,3 @@ en:
         note:
           shorter_review: 'Reviews must be shorter'
           invalid_note_type: 'Invalid Type'
-    models:
-      note:
-        created_with_success: 'Note succesfully created'

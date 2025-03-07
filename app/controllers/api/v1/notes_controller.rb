@@ -25,7 +25,7 @@ module Api
 
         current_user.notes.create!(title: params[:note][:title], note_type: params[:note][:type],
                                    content: params[:note][:content])
-        render json: { message: I18n.t('activerecord.models.note.created_with_success') },
+        render json: { message: I18n.t('success.messages.created_with_success') },
                status: :created
       end
 

@@ -30,6 +30,9 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 es:
+  success:
+    messages:
+      created_with_success: 'Nota creada con éxito'
   errors:
     messages:
       internal_server_error: 'Faltan parametros requeridos.'
@@ -40,6 +43,3 @@ es:
         note:
           shorter_review: 'Una reseña no puede superar las 50 palabras.'
           invalid_note_type: 'El tipo de nota no es válido.'
-    models:
-      note:
-        created_with_success: 'Nota creada con éxito'
