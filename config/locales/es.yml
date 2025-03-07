@@ -33,6 +33,7 @@ es:
   errors:
     messages:
       internal_server_error: 'Faltan parametros requeridos.'
+      service_unavailable: 'Servicio  temporalmente no disponible'
   activerecord: 
     errors:
       models:

@@ -30,12 +30,31 @@ module UtilityService
           {
             title: note['titulo'],
             type: note['tipo'],
-            created_at: note.created_at,
+            created_at: note['fecha_creacion'],
             content: note['contenido'],
-            user: current_user,
-            book: note['libro']
+            user: get_user_info(note),
+            book: get_book_info(note)
           }
         end
+      end
+
+      def get_user_info(note)
+        contact_data = note['autor']['datos_de_contacto']
+        personal_data = note['autor']['datos_personales']
+        {
+          email: contact_data['email'],
+          first_name: personal_data['nombre'],
+          last_name: personal_data['apellido']
+        }
+      end
+
+      def get_book_info(note)
+        book_data = note['libro']
+        {
+          title: book_data['titulo'],
+          author: book_data['autor'],
+          genre: book_data['genero']
+        }
       end
     end
   end

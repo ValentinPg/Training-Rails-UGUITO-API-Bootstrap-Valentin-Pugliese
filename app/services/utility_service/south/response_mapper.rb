@@ -29,13 +29,35 @@ module UtilityService
         notes.map do |note|
           {
             title: note['TituloNota'],
-            type: note['ReseniaNota'],
+            type: get_note_type(note),
             created_at: note['FechaCreacionNota'],
             content: note['Contenido'],
-            user: current_user,
-            book: note['TituloLibro']
+            user: get_user_info(note),
+            book: get_book_info(note)
           }
         end
+      end
+
+      def get_user_info(note)
+        firstname = note['NombreCompletoAutor'].split.last
+        lastname = note['NombreCompletoAutor'].split.first
+        {
+          email: note['EmailAutor'],
+          first_name: firstname,
+          last_name: lastname
+        }
+      end
+
+      def get_note_type(note)
+        note['ReseniaNota'] ? 'review' : 'critique'
+      end
+
+      def get_book_info(note)
+        {
+          title: note['TituloLibro'],
+          author: note['NombreCompletoAutor'],
+          genre: note['GeneroLibro']
+        }
       end
     end
   end
