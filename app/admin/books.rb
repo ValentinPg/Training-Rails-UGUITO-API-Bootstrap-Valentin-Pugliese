@@ -4,7 +4,7 @@ ActiveAdmin.register Book do
   filter :genre
   filter :utility
 
-  permit_params :utility_id, :genre, :author, :image, :title, :publisher, :year
+  permit_params :utility_id, :genre, :author, :image, :title, :publisher, :year, :user_id
 
   index do
     selectable_column
@@ -25,7 +25,7 @@ ActiveAdmin.register Book do
       f.input :year
       f.input :image, as: :url
       f.input :utility
-      f.input :user, as: :select, collection: User.pluck(:email)
+      f.input :user, as: :select, collection: User.pluck(:email, :id)
       f.actions
     end
   end
