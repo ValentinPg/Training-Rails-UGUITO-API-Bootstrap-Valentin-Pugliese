@@ -13,6 +13,8 @@
 #  external_api_access_token_expiration :datetime
 #  integration_urls                     :jsonb
 #  jsonb                                :jsonb
+#  short_length                         :integer          not null
+#  long_length                          :integer          not null
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
 #
@@ -26,8 +28,10 @@ class Utility < ApplicationRecord
 
   validates :name, uniqueness: true
   validates :name, :type, presence: true
+  validate :valid_length?
 
-  store_accessor :integration_urls, :external_api_authentication_url, :books_data_url, :notes_data_url
+  store_accessor :integration_urls, :external_api_authentication_url, :books_data_url,
+                 :notes_data_url
 
   def generate_entity_code
     return if code.present? && !code.to_i.zero?
@@ -73,14 +77,6 @@ class Utility < ApplicationRecord
     self.class.name.underscore.split('_').first
   end
 
-  def short
-    NotImplementedError
-  end
-
-  def long
-    NotImplementedError
-  end
-
   def content_length_criteria(length)
     if short?(length)
       'short'
@@ -91,14 +87,20 @@ class Utility < ApplicationRecord
     end
   end
 
+  def valid_length?
+    unless short_length < long_length
+      errors.add(:short_length, I18n.t('activerecord.errors.models.note.invalid_length'))
+    end
+  end
+
   private
 
   def short?(length)
-    length <= short
+    length <= short_length
   end
 
   def medium?(length)
-    length > short && length <= long
+    length > short_length && length <= long_length
   end
 
   def utility_type
