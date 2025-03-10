@@ -10,8 +10,6 @@ class CreateUtilities < ActiveRecord::Migration[5.2]
       t.string :external_api_access_token
       t.datetime :external_api_access_token_expiration
       t.jsonb :integration_urls, :jsonb, default: {}
-      t.integer :short_note_length, null:false
-      t.integer :long_note_length, null:false
 
       t.timestamps
     end
