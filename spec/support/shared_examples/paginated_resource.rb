@@ -6,8 +6,8 @@ shared_examples 'paginated resource' do
   end
 
   it 'returns te correct items' do
-    expected_ids = expected.pluck(:id).to_set
-    response_ids = response_body.map { |i| i['id'] }.to_set
-    expect(response_ids).to eq(expected_ids)
+    expected_ids = expected.pluck(:id)
+    response_ids = response_body.pluck(:id)
+    expect(response_ids).to match_array(expected_ids)
   end
 end
