@@ -136,7 +136,7 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when exceeding the review limit' do
-        let(:random_text) { Faker::Lorem.sentence(word_count: user.utility.long) }
+        let(:random_text) { Faker::Lorem.sentence(word_count: user.utility.long_length) }
         let(:random_type) { 'review' }
         let(:message) { I18n.t('activerecord.errors.models.note.shorter_review') }
 
