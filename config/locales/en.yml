@@ -44,3 +44,4 @@ en:
         note:
           shorter_review: 'Reviews must be shorter'
           invalid_note_type: 'Invalid Type'
+          invalid_length: 'must be shorter than long length'

@@ -43,3 +43,4 @@ es:
         note:
           shorter_review: 'Una reseña no puede superar las 50 palabras.'
           invalid_note_type: 'El tipo de nota no es válido.'
+          invalid_length: 'debe ser menor que long length'
