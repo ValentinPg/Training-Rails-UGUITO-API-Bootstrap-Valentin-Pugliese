@@ -113,8 +113,8 @@ ActiveRecord::Schema.define(version: 2025_02_13_175522) do
     t.datetime "external_api_access_token_expiration"
     t.jsonb "integration_urls", default: {}
     t.jsonb "jsonb", default: {}
-    t.integer "short_length", null: false
-    t.integer "long_length", null: false
+    t.integer "short_note_length", null: false
+    t.integer "long_note_length", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

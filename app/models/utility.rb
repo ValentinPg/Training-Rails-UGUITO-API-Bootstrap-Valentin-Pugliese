@@ -13,8 +13,8 @@
 #  external_api_access_token_expiration :datetime
 #  integration_urls                     :jsonb
 #  jsonb                                :jsonb
-#  short_length                         :integer          not null
-#  long_length                          :integer          not null
+#  short_note_length                    :integer          not null
+#  long_note_length                     :integer          not null
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
 #
@@ -90,11 +90,11 @@ class Utility < ApplicationRecord
   private
 
   def short?(length)
-    length <= short_length
+    length <= short_note_length
   end
 
   def medium?(length)
-    length > short_length && length <= long_length
+    length > short_note_length && length <= long_note_length
   end
 
   def utility_type
@@ -102,7 +102,7 @@ class Utility < ApplicationRecord
   end
 
   def valid_length?
-    return if short_length < long_length
-    errors.add(:short_length, I18n.t('activerecord.errors.models.note.invalid_length'))
+    return if short_note_length < long_note_length
+    errors.add(:short_note_length, I18n.t('activerecord.errors.models.note.invalid_length'))
   end
 end

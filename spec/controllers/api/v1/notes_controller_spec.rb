@@ -139,10 +139,10 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when exceeding the review limit' do
-        let(:random_text) { Faker::Lorem.sentence(word_count: user.utility.long_length) }
+        let(:random_text) { Faker::Lorem.sentence(word_count: user.utility.long_note_length) }
         let(:random_type) { 'review' }
         let(:message) { I18n.t('activerecord.errors.models.note.shorter_review', max_length: max_length) }
-        let(:max_length) { user.utility.short_length }
+        let(:max_length) { user.utility.short_note_length }
 
         it_behaves_like 'unprocessable entity with message'
       end

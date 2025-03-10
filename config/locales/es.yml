@@ -43,4 +43,4 @@ es:
         note:
           shorter_review: "Una reseña no puede superar las %{max_length} palabras."
           invalid_note_type: 'El tipo de nota no es válido.'
-          invalid_length: 'debe ser menor que long length'
+          invalid_length: 'debe ser menor que long note length'
