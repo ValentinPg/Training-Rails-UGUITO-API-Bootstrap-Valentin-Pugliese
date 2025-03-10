@@ -87,12 +87,6 @@ class Utility < ApplicationRecord
     end
   end
 
-  def valid_length?
-    unless short_length < long_length
-      errors.add(:short_length, I18n.t('activerecord.errors.models.note.invalid_length'))
-    end
-  end
-
   private
 
   def short?(length)
@@ -105,5 +99,10 @@ class Utility < ApplicationRecord
 
   def utility_type
     type.chomp('Utility')
+  end
+
+  def valid_length?
+    return if short_length < long_length
+    errors.add(:short_length, I18n.t('activerecord.errors.models.note.invalid_length'))
   end
 end

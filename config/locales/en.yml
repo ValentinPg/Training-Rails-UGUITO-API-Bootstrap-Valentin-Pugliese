@@ -42,6 +42,6 @@ en:
     errors:
       models:
         note:
-          shorter_review: 'Reviews must be shorter'
+          shorter_review: "A review cannot be longer than %{max_length} words"
           invalid_note_type: 'Invalid Type'
           invalid_length: 'must be shorter than long length'

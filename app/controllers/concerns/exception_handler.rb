@@ -25,7 +25,8 @@ module ExceptionHandler
   end
 
   def render_invalid_note(error)
-    message = I18n.t('activerecord.errors.models.note.shorter_review')
+    message = I18n.t('activerecord.errors.models.note.shorter_review',
+                     max_length: utility.short_length)
     render_error(:invalid_note, message: message, meta: error.message,
                                 status: :unprocessable_entity)
   end
