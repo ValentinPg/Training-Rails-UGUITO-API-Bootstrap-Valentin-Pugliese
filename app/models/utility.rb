@@ -73,7 +73,33 @@ class Utility < ApplicationRecord
     self.class.name.underscore.split('_').first
   end
 
+  def short
+    NotImplementedError
+  end
+
+  def long
+    NotImplementedError
+  end
+
+  def content_length_criteria(length)
+    if short?(length)
+      'short'
+    elsif medium?(length)
+      'medium'
+    else
+      'long'
+    end
+  end
+
   private
+
+  def short?(length)
+    length <= short
+  end
+
+  def medium?(length)
+    length > short && length <= long
+  end
 
   def utility_type
     type.chomp('Utility')
