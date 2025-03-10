@@ -4,10 +4,7 @@ module Api
       before_action :authenticate_user!
 
       def index
-        unless valid_type?(params[:type])
-          return render_error(:invalid_note_type,
-                              invalid_note_type)
-        end
+        return render_error(:invalid_note_type, invalid_note_type) unless valid_type?(params[:type])
         render json: paged_notes, status: :ok, each_serializer: IndexNoteSerializer
       end
 
@@ -16,19 +13,23 @@ module Api
       end
 
       def create
-        return render_error(:invalid_note_type, invalid_note_type) unless create_params
+        return render_error(:invalid_note_type, invalid_note_type) unless valid_create_params?
 
-        current_user.notes.create!(title: params[:note][:title], note_type: params[:note][:type],
-                                   content: params[:note][:content])
+        current_user.notes.create!(create_params)
         render json: { message: I18n.t('success.messages.created_with_success') },
                status: :created
       end
 
       private
 
-      def create_params
+      def valid_create_params?
         require_nested({ 'title': true, 'content': true, 'type': true }, params[:note])
         valid_type?(params[:note][:type])
+      end
+
+      def create_params
+        note = params[:note]
+        { title: note[:title], note_type: note[:type], content: note[:content] }
       end
 
       def ordered_notes
