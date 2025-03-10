@@ -1,6 +1,8 @@
 module Api
   module V1
     class NotesController < ApplicationController
+      before_action :authenticate_user!
+
       def index
         return render_error unless valid_type?
         render json: paged_notes, status: :ok, each_serializer: NoteBriefSerializer
@@ -21,11 +23,15 @@ module Api
       end
 
       def notes
-        Note.where(note_type: params[:type])
+        user_notes.where(note_type: params[:type])
       end
 
       def note
-        Note.find(params[:id])
+        user_notes.find(params[:id])
+      end
+
+      def user_notes
+        current_user.notes
       end
 
       def should_order_notes?
