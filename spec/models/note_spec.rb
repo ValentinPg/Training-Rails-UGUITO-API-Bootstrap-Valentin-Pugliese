@@ -23,21 +23,21 @@ RSpec.describe Note, type: :model do
 
     context 'when content is short' do
       it do
-        critique.update!(content: Faker::Lorem.words(number: critique.utility.short_note_length).join(' '))
+        critique.update!(content: Faker::Lorem.sentence(word_count: critique.utility.short_note_length))
         expect(critique.content_length).to eq('short')
       end
     end
 
     context 'when content is medium' do
       it do
-        critique.update!(content: Faker::Lorem.words(number: (critique.utility.short_note_length + 1)).join(' '))
+        critique.update!(content: Faker::Lorem.sentence(word_count: (critique.utility.short_note_length + 1)))
         expect(critique.content_length).to eq('medium')
       end
     end
 
     context 'when content is long' do
       it do
-        critique.update!(content: Faker::Lorem.words(number: critique.utility.long_note_length + 1).join(' '))
+        critique.update!(content: Faker::Lorem.sentence(word_count: critique.utility.long_note_length + 1))
         expect(critique.content_length).to eq('long')
       end
     end
@@ -47,13 +47,13 @@ RSpec.describe Note, type: :model do
     subject(:review) { create(:note, note_type: 'review') }
 
     context 'when is medium' do
-      let(:medium) { Faker::Lorem.words(number: (review.utility.short_note_length + 1)).join(' ') }
+      let(:medium) { Faker::Lorem.sentence(word_count: (review.utility.short_note_length + 1)) }
 
       it { expect { review.update!(content: medium) }.to raise_error(Exceptions::NoteContentError) }
     end
 
     context 'when is long' do
-      let(:long) { Faker::Lorem.words(number: (review.utility.long_note_length + 1)).join(' ') }
+      let(:long) { Faker::Lorem.sentence(word_count: (review.utility.long_note_length + 1)) }
 
       it { expect { review.update!(content: long) }.to raise_error(Exceptions::NoteContentError) }
     end
