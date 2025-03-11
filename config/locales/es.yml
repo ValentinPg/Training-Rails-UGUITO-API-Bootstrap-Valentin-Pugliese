@@ -34,11 +34,14 @@ es:
     messages:
       created_with_success: 'Nota creada con éxito'
   errors:
+    format: "%{message}"
     messages:
       internal_server_error: 'Faltan parametros requeridos.'
       service_unavailable: 'Servicio  temporalmente no disponible'
   activerecord: 
     errors:
+      messages:
+        record_invalid: "%{errors}"
       models:
         note:
           shorter_review: "Una reseña no puede superar las %{max_length} palabras."

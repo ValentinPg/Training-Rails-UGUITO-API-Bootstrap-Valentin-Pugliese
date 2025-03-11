@@ -49,13 +49,13 @@ RSpec.describe Note, type: :model do
     context 'when is medium' do
       let(:medium) { Faker::Lorem.sentence(word_count: (review.utility.short_note_length + 1)) }
 
-      it { expect { review.update!(content: medium) }.to raise_error(Exceptions::NoteContentError) }
+      it { expect { review.update!(content: medium) }.to raise_error(ActiveRecord::RecordInvalid) }
     end
 
     context 'when is long' do
       let(:long) { Faker::Lorem.sentence(word_count: (review.utility.long_note_length + 1)) }
 
-      it { expect { review.update!(content: long) }.to raise_error(Exceptions::NoteContentError) }
+      it { expect { review.update!(content: long) }.to raise_error(ActiveRecord::RecordInvalid) }
     end
   end
 end
