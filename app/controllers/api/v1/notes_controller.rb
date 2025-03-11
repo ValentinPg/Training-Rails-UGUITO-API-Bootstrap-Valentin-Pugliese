@@ -23,13 +23,17 @@ module Api
       private
 
       def valid_create_params?
-        require_nested({ 'title': true, 'content': true, 'type': true }, params[:note])
-        valid_type?(params[:note][:type])
+        valid_type?(create_params[:note_type])
       end
 
       def create_params
-        note = params[:note]
-        { title: note[:title], note_type: note[:type], content: note[:content] }
+        permitted = require_nested({ title: true, content: true, type: true }, params[:note])
+        params[:note].permit(permitted)
+        {
+          title: params[:note][:title],
+          content: params[:note][:content],
+          note_type: params[:note][:type]
+        }
       end
 
       def ordered_notes

@@ -35,10 +35,13 @@ en:
     messages:
       created_with_success: 'Note succesfully created'
   errors:
+    format: "%{message}"
     messages:
       internal_server_error: 'Required parameters missing'
   activerecord: 
     errors:
+      messages:
+        record_invalid: "%{errors}"
       models:
         note:
           shorter_review: 'Reviews must be shorter'

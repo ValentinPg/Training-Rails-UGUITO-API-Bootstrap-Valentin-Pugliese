@@ -34,11 +34,14 @@ es:
     messages:
       created_with_success: 'Nota creada con éxito'
   errors:
+    format: "%{message}"
     messages:
       internal_server_error: 'Faltan parametros requeridos.'
   activerecord: 
     errors:
+      messages:
+        record_invalid: "%{errors}"
       models:
         note:
-          shorter_review: 'Una reseña no puede superar las 50 palabras.'
+          shorter_review: 'una reseña no puede superar las 50 palabras.'
           invalid_note_type: 'El tipo de nota no es válido.'
