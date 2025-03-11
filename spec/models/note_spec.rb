@@ -49,13 +49,13 @@ RSpec.describe Note, type: :model do
     context 'when is medium' do
       let(:medium) { Faker::Lorem.words(number: (review.utility.short + 1)).join(' ') }
 
-      it { expect { review.update!(content: medium) }.to raise_error(Exceptions::NoteContentError) }
+      it { expect { review.update!(content: medium) }.to raise_error(ActiveRecord::RecordInvalid) }
     end
 
     context 'when is long' do
       let(:long) { Faker::Lorem.words(number: (review.utility.long + 1)).join(' ') }
 
-      it { expect { review.update!(content: long) }.to raise_error(Exceptions::NoteContentError) }
+      it { expect { review.update!(content: long) }.to raise_error(ActiveRecord::RecordInvalid) }
     end
   end
 end

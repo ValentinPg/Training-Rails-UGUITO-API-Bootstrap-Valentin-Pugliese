@@ -21,6 +21,8 @@ describe Api::V1::NotesController, type: :controller do
       context 'when fetching reviews' do
         let(:type) { 'review' }
 
+        it { expect(response_body.sample['type']).to eq(type) }
+
         it { expect(response_body.size).to eq(expected_size) }
 
         it { expect(response).to have_http_status(:ok) }
@@ -28,6 +30,8 @@ describe Api::V1::NotesController, type: :controller do
 
       context 'when fetching critiques' do
         let(:type) { 'critique' }
+
+        it { expect(response_body.sample['type']).to eq(type) }
 
         it { expect(response_body.size).to eq(expected_size) }
 
