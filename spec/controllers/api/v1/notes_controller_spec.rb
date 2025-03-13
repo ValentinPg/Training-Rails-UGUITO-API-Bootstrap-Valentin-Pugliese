@@ -19,6 +19,8 @@ describe Api::V1::NotesController, type: :controller do
       it { expect(response_body.sample.keys).to match_array(expected_keys) }
 
       context 'when fetching reviews' do
+        before { create(:note, note_type: 'critique', user: user) }
+
         let(:type) { 'review' }
 
         it { expect(response_body.sample['type']).to eq(type) }
@@ -29,6 +31,8 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when fetching critiques' do
+        before { create(:note, note_type: 'review', user: user) }
+
         let(:type) { 'critique' }
 
         it { expect(response_body.sample['type']).to eq(type) }
