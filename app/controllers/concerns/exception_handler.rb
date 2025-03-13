@@ -6,6 +6,7 @@ module ExceptionHandler
     rescue_from ActionController::ParameterMissing, with: :render_incorrect_parameter
     rescue_from ActionController::UnpermittedParameters, with: :render_incorrect_parameter
     rescue_from ActiveRecord::RecordNotFound, with: :render_nothing_not_found
+    rescue_from ActiveRecord::RecordInvalid, with: :render_invalid_record
     rescue_from Exceptions::ClientForbiddenError, with: :render_client_forbidden
     rescue_from Exceptions::ClientUnauthorizedError, with: :render_client_unauthorized
     rescue_from Exceptions::InvalidCurrentClientError do |_exception|
@@ -16,6 +17,10 @@ module ExceptionHandler
   end
 
   private
+
+  def render_invalid_record(error)
+    render_error(:invalid_record, message: error, status: :unprocessable_entity)
+  end
 
   def render_invalid_parameter(error)
     # The InvalidParameterError exception is raised with the error identifier as a parameter, and

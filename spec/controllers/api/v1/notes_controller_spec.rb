@@ -77,9 +77,9 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when passing invalid parameters' do
-        before { get :index, params: { type: 'test' } }
+        before { get :index, params: {} }
 
-        it { expect(response).to have_http_status(:bad_request) }
+        it { expect(response).to have_http_status(:unprocessable_entity) }
       end
     end
 
@@ -109,6 +109,92 @@ describe Api::V1::NotesController, type: :controller do
         before { get :show, params: { id: Faker::Number.number } }
 
         it_behaves_like 'unauthorized'
+      end
+    end
+  end
+
+  describe 'POST #create' do
+    let(:note_params) { { title: random_title, content: random_content, type: random_type } }
+    let(:random_title) { Faker::Lorem.sentence(word_count: 5) }
+    let(:random_content) { Faker::Lorem.sentence(word_count: 10) }
+    let(:random_type) { Note.note_types.keys.sample }
+
+    context 'when there is a user logged in' do
+      include_context 'with authenticated user'
+      before { post :create, params: { note: note_params } }
+
+      let(:created_note) { user.notes.where(title: note_params[:title]) }
+
+      it { expect(response).to have_http_status(:created) }
+      it { expect(created_note.exists?).to be true }
+
+      context 'when invalid note_type' do
+        let(:note_params) { { title: random_title, content: random_content, type: 'test' } }
+        let(:message) { I18n.t('activerecord.errors.models.note.invalid_note_type') }
+
+        it_behaves_like 'unprocessable entity with message'
+      end
+
+      context 'when missing params' do
+        before do
+          note_params.delete(note_params.keys.sample)
+          post :create, params: { note: note_params }
+        end
+
+        let(:message) { I18n.t('errors.messages.internal_server_error') }
+
+        it_behaves_like 'bad request with message'
+      end
+
+      context 'when exceeding the review limit' do
+        let(:random_content) { Faker::Lorem.sentence(word_count: user.utility.long) }
+        let(:random_type) { 'review' }
+        let(:message) { I18n.t('activerecord.errors.models.note.shorter_review') }
+
+        it_behaves_like 'unprocessable entity with message'
+      end
+    end
+
+    context 'when there is no user logged in' do
+      before { post :create, params: { note: note_params } }
+
+      it_behaves_like 'unauthorized'
+    end
+  end
+
+  describe 'GET #index_async' do
+    context 'when the user is authenticated' do
+      include_context 'with authenticated user'
+
+      let(:author) { Faker::Book.author }
+      let(:params) { { author: author } }
+      let(:worker_name) { 'RetrieveNotesWorker' }
+      let(:parameters) { [params] }
+
+      before { get :index_async, params: params }
+
+      it 'returns status code accepted' do
+        expect(response).to have_http_status(:accepted)
+      end
+
+      it 'returns the response id and url to retrive the data later' do
+        expect(response_body.keys).to contain_exactly('response', 'job_id', 'url')
+      end
+
+      it 'enqueues a job' do
+        expect(AsyncRequest::JobProcessor.jobs.size).to eq(1)
+      end
+
+      it 'creates the right job' do
+        expect(AsyncRequest::Job.last.worker).to eq(worker_name)
+      end
+    end
+
+    context 'when the user is not authenticated' do
+      before { get :index_async }
+
+      it 'returns status code unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end

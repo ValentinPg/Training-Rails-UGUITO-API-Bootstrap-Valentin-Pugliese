@@ -53,4 +53,17 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[first_name last_name document_number])
   end
+
+  def unprocessable_entity_rp
+    render_error(unprocessable_entity_msg, :unprocessable_entity)
+  end
+
+  def bad_request_rp
+    render_error(bad_request_msg, :bad_request)
+  end
+
+  def render_error(_error_type, error_info)
+    render json: { error: error_info[:message] },
+           status: error_info[:status]
+  end
 end

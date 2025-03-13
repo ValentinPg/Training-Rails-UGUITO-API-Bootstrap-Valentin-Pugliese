@@ -21,7 +21,11 @@ Rails.application.routes.draw do
     resource :users do
       get :current
     end
-      resources :notes, only: [:index, :show]
+     resources :notes, only: [:index, :show, :create] do
+      collection do
+        get :async, to: 'notes#index_async'
+      end
+    end
   end
 
   get '/async_request/jobs/:id', to: 'async_request/jobs#show'
@@ -104,6 +108,7 @@ end
 #                 async_api_v1_books GET        /api/v1/books/async(.:format)                                                                     api/v1/books#index_async {:format=>:json}
 #                       api_v1_books GET        /api/v1/books(.:format)                                                                           api/v1/books#index {:format=>:json}
 #                        api_v1_book GET        /api/v1/books/:id(.:format)                                                                       api/v1/books#show {:format=>:json}
+#                 async_api_v1_notes GET        /api/v1/notes/async(.:format)                                                                     api/v1/notes#index_async {:format=>:json}
 #               current_api_v1_users GET        /api/v1/users/current(.:format)                                                                   api/v1/users#current {:format=>:json}
 #                       api_v1_users GET        /api/v1/users(.:format)                                                                           api/v1/users#show {:format=>:json}
 #                                    PATCH      /api/v1/users(.:format)                                                                           api/v1/users#update {:format=>:json}
@@ -111,6 +116,7 @@ end
 #                                    DELETE     /api/v1/users(.:format)                                                                           api/v1/users#destroy {:format=>:json}
 #                                    POST       /api/v1/users(.:format)                                                                           api/v1/users#create {:format=>:json}
 #                       api_v1_notes GET        /api/v1/notes(.:format)                                                                           api/v1/notes#index {:format=>:json}
+#                                    POST       /api/v1/notes(.:format)                                                                           api/v1/notes#create {:format=>:json}
 #                        api_v1_note GET        /api/v1/notes/:id(.:format)                                                                       api/v1/notes#show {:format=>:json}
 #                                    GET        /async_request/jobs/:id(.:format)                                                                 async_request/jobs#show
 #                        sidekiq_web            /sidekiq                                                                                          Sidekiq::Web
