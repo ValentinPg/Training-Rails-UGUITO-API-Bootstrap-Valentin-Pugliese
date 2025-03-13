@@ -13,6 +13,8 @@
 #  external_api_access_token_expiration :datetime
 #  integration_urls                     :jsonb
 #  jsonb                                :jsonb
+#  short_note_length                    :integer          not null
+#  long_note_length                     :integer          not null
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
 #
@@ -26,8 +28,11 @@ class Utility < ApplicationRecord
 
   validates :name, uniqueness: true
   validates :name, :type, presence: true
+  validates :short_note_length, :long_note_length, numericality: { greater_than: 0 }
+  validate :valid_length?
 
-  store_accessor :integration_urls, :external_api_authentication_url, :books_data_url, :notes_data_url
+  store_accessor :integration_urls, :external_api_authentication_url, :books_data_url,
+                 :notes_data_url
 
   def generate_entity_code
     return if code.present? && !code.to_i.zero?
@@ -73,14 +78,6 @@ class Utility < ApplicationRecord
     self.class.name.underscore.split('_').first
   end
 
-  def short
-    NotImplementedError
-  end
-
-  def long
-    NotImplementedError
-  end
-
   def content_length_criteria(length)
     if short?(length)
       'short'
@@ -94,14 +91,19 @@ class Utility < ApplicationRecord
   private
 
   def short?(length)
-    length <= short
+    length <= short_note_length
   end
 
   def medium?(length)
-    length > short && length <= long
+    length > short_note_length && length <= long_note_length
   end
 
   def utility_type
     type.chomp('Utility')
+  end
+
+  def valid_length?
+    return if short_note_length < long_note_length
+    errors.add(:short_note_length, I18n.t('activerecord.errors.models.note.invalid_length'))
   end
 end

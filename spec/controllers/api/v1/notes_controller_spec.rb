@@ -121,7 +121,10 @@ describe Api::V1::NotesController, type: :controller do
 
     context 'when there is a user logged in' do
       include_context 'with authenticated user'
-      before { post :create, params: { note: note_params } }
+      before do
+        request.headers['Utility-ID'] = user.utility_id
+        post :create, params: { note: note_params }
+      end
 
       let(:created_note) { user.notes.where(title: note_params[:title]) }
 
@@ -147,9 +150,10 @@ describe Api::V1::NotesController, type: :controller do
       end
 
       context 'when exceeding the review limit' do
-        let(:random_content) { Faker::Lorem.sentence(word_count: user.utility.long) }
+        let(:random_content) { Faker::Lorem.sentence(word_count: user.utility.long_note_length) }
         let(:random_type) { 'review' }
-        let(:message) { I18n.t('activerecord.errors.models.note.shorter_review') }
+        let(:message) { I18n.t('activerecord.errors.models.note.shorter_review', max_length: max_length) }
+        let(:max_length) { user.utility.short_note_length }
 
         it_behaves_like 'unprocessable entity with message'
       end

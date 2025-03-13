@@ -30,6 +30,8 @@ class Note < ApplicationRecord
 
   def review_cap
     return unless content_length != 'short' && note_type == 'review'
-    errors.add(:content, message: I18n.t('activerecord.errors.models.note.shorter_review'))
+    errors.add(:content,
+               message: I18n.t('activerecord.errors.models.note.shorter_review',
+                               max_length: utility.short_note_length))
   end
 end
