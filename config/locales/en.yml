@@ -38,6 +38,7 @@ en:
     format: "%{message}"
     messages:
       internal_server_error: 'Required parameters missing'
+      service_unavailable: 'Service is temporarily unavailable'
   activerecord: 
     errors:
       messages:
